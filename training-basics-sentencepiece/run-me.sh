@@ -67,7 +67,7 @@ $MARIAN/build/marian \
     --vocabs model/vocab.roen.spm model/vocab.roen.spm \
     --sentencepiece-options '--normalization_rule_tsv=data/norm_romanian.tsv' \
     --dim-vocabs 32000 32000 \
-    --mini-batch-fit -w 5000 \
+    --mini-batch-fit -w 20000 \
     --layer-normalization --tied-embeddings-all \
     --dropout-rnn 0.2 --dropout-src 0.1 --dropout-trg 0.1 \
     --early-stopping 5 --max-length 100 \

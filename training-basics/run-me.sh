@@ -56,7 +56,7 @@ then
         --train-sets data/corpus.bpe.ro data/corpus.bpe.en \
         --vocabs model/vocab.ro.yml model/vocab.en.yml \
         --dim-vocabs 66000 50000 \
-        --mini-batch-fit -w 3000 \
+        --mini-batch-fit -w 19000 \
         --layer-normalization --dropout-rnn 0.2 --dropout-src 0.1 --dropout-trg 0.1 \
         --early-stopping 5 \
         --valid-freq 10000 --save-freq 10000 --disp-freq 1000 \
