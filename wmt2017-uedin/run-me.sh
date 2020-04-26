@@ -21,7 +21,7 @@ then
 fi
 echo Using GPUs: $GPUS
 
-WORKSPACE=9500
+WORKSPACE=21500
 N=4
 B=12
 EPOCHS=8
