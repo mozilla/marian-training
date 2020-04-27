@@ -39,12 +39,12 @@ sudo apt-get install libprotobuf10 protobuf-compiler libprotobuf-dev
 ```
 
 For more details see the documentation in the SentencePiece repo:
-https://github.com/marian-nmt/sentencepiece#c-from-source
+https://github.com/mozilla/sentencepiece#c-from-source
 
 With these dependencies met, you can compile Marian as follows:
 
 ```
-git clone https://github.com/marian-nmt/marian
+git clone https://github.com/mozilla/marian
 cd marian
 mkdir build
 cd build
@@ -110,7 +110,7 @@ clone the SacreBLEU repository from our fork and then generate the test files.
 
 ```
 # get our fork of sacrebleu
-git clone https://github.com/marian-nmt/sacreBLEU.git sacreBLEU
+git clone https://github.com/mozilla/sacreBLEU.git sacreBLEU
 
 # create dev set
 sacreBLEU/sacrebleu.py -t wmt16/dev -l ro-en --echo src > data/newsdev2016.ro

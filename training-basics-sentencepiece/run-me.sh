@@ -17,7 +17,7 @@ then
 fi
 
 # get our fork of sacrebleu
-git clone https://github.com/marian-nmt/sacreBLEU.git sacreBLEU
+git clone https://github.com/mozilla/sacreBLEU.git sacreBLEU
 
 # create dev set
 sacreBLEU/sacrebleu.py -t wmt16/dev -l ro-en --echo src > data/newsdev2016.ro
