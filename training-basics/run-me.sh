@@ -38,7 +38,7 @@ then
     ./scripts/download-files.sh
 fi
 
-mkdir -p model
+export MODEL=`pwd`/../../../keep
 
 # preprocess data
 if [ ! -e "data/corpus.bpe.en" ]
@@ -47,14 +47,14 @@ then
 fi
 
 # train model
-if [ ! -e "model/model.npz.best-translation.npz" ]
+if [ ! -e "$MODEL/model.npz.best-translation.npz" ]
 then
     $MARIAN_TRAIN \
         --devices $GPUS \
         --type amun \
-        --model model/model.npz \
+        --model $MODEL/model.npz \
         --train-sets data/corpus.bpe.ro data/corpus.bpe.en \
-        --vocabs model/vocab.ro.yml model/vocab.en.yml \
+        --vocabs $MODEL/vocab.ro.yml $MODEL/vocab.en.yml \
         --dim-vocabs 66000 50000 \
         --mini-batch-fit -w 19000 \
         --layer-normalization --dropout-rnn 0.2 --dropout-src 0.1 --dropout-trg 0.1 \
@@ -63,7 +63,7 @@ then
         --valid-metrics cross-entropy translation \
         --valid-sets data/newsdev2016.bpe.ro data/newsdev2016.bpe.en \
         --valid-script-path "bash ./scripts/validate.sh" \
-        --log model/train.log --valid-log model/valid.log \
+        --log $MODEL/train.log --valid-log $MODEL/valid.log \
         --overwrite --keep-best \
         --seed 1111 --exponential-smoothing \
         --normalize=1 --beam-size=12 --quiet-translation
@@ -71,7 +71,7 @@ fi
 
 # translate dev set
 cat data/newsdev2016.bpe.ro \
-    | $MARIAN_DECODER -c model/model.npz.best-translation.npz.decoder.yml -d $GPUS -b 12 -n1 \
+    | $MARIAN_DECODER -c $MODEL/model.npz.best-translation.npz.decoder.yml -d $GPUS -b 12 -n1 \
       --mini-batch 64 --maxi-batch 10 --maxi-batch-sort src \
     | sed 's/\@\@ //g' \
     | ../tools/moses-scripts/scripts/recaser/detruecase.perl \
@@ -80,7 +80,7 @@ cat data/newsdev2016.bpe.ro \
 
 # translate test set
 cat data/newstest2016.bpe.ro \
-    | $MARIAN_DECODER -c model/model.npz.best-translation.npz.decoder.yml -d $GPUS -b 12 -n1 \
+    | $MARIAN_DECODER -c $MODEL/model.npz.best-translation.npz.decoder.yml -d $GPUS -b 12 -n1 \
       --mini-batch 64 --maxi-batch 10 --maxi-batch-sort src \
     | sed 's/\@\@ //g' \
     | ../tools/moses-scripts/scripts/recaser/detruecase.perl \

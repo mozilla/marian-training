@@ -43,7 +43,7 @@ then
     ./scripts/download-files.sh
 fi
 
-mkdir -p model
+export MODEL=`pwd`/../../../keep
 
 # preprocess data
 if [ ! -e "data/corpus.bpe.en" ]
@@ -70,20 +70,20 @@ then
 fi
 
 # create common vocabulary
-if [ ! -e "model/vocab.ende.yml" ]
+if [ ! -e "$MODEL/vocab.ende.yml" ]
 then
-    cat data/corpus.bpe.en data/corpus.bpe.de | $MARIAN_VOCAB --max-size 36000 > model/vocab.ende.yml
+    cat data/corpus.bpe.en data/corpus.bpe.de | $MARIAN_VOCAB --max-size 36000 > $MODEL/vocab.ende.yml
 fi
 
 # train model
-mkdir -p model.back
-if [ ! -e "model.back/model.npz.best-translation.npz" ]
+mkdir -p $MODEL/back
+if [ ! -e "$MODEL/back/model.npz.best-translation.npz" ]
 then
     $MARIAN_TRAIN \
-        --model model.back/model.npz --type s2s \
+        --model $MODEL/back/model.npz --type s2s \
         --train-sets data/corpus.bpe.de data/corpus.bpe.en \
         --max-length 100 \
-        --vocabs model/vocab.ende.yml model/vocab.ende.yml \
+        --vocabs $MODEL/vocab.ende.yml $MODEL/vocab.ende.yml \
         --mini-batch-fit -w 3500 --maxi-batch 1000 \
         --valid-freq 10000 --save-freq 10000 --disp-freq 1000 \
         --valid-metrics ce-mean-words perplexity translation \
@@ -93,7 +93,7 @@ then
         --valid-mini-batch 64 --beam-size 12 --normalize=1 \
         --overwrite --keep-best \
         --early-stopping 5 --after-epochs 10 --cost-type=ce-mean-words \
-        --log model.back/train.log --valid-log model.back/valid.log \
+        --log $MODEL/back/train.log --valid-log $MODEL/back/valid.log \
         --tied-embeddings-all --layer-normalization \
         --devices $GPUS --seed 1111 \
         --exponential-smoothing
@@ -102,7 +102,7 @@ fi
 if [ ! -e "data/news.2016.bpe.en" ]
 then
     $MARIAN_DECODER \
-      -c model.back/model.npz.best-translation.npz.decoder.yml \
+      -c $MODEL/back/model.npz.best-translation.npz.decoder.yml \
       -i data/news.2016.bpe.de \
       -b 6 --normalize=1 -w 2500 -d $GPUS \
       --mini-batch 64 --maxi-batch 100 --maxi-batch-sort src \
@@ -118,13 +118,13 @@ fi
 
 for i in $(seq 1 $N)
 do
-  mkdir -p model/ens$i
+  mkdir -p $MODEL/ens$i
   # train model
     $MARIAN_TRAIN \
-        --model model/ens$i/model.npz --type s2s \
+        --model $MODEL/ens$i/model.npz --type s2s \
         --train-sets data/all.bpe.en data/all.bpe.de \
         --max-length 100 \
-        --vocabs model/vocab.ende.yml model/vocab.ende.yml \
+        --vocabs $MODEL/vocab.ende.yml $MODEL/vocab.ende.yml \
         --mini-batch-fit -w $WORKSPACE --mini-batch 1000 --maxi-batch 1000 \
         --valid-freq 5000 --save-freq 5000 --disp-freq 500 \
         --valid-metrics ce-mean-words perplexity translation \
@@ -135,7 +135,7 @@ do
         --valid-mini-batch 64 \
         --overwrite --keep-best \
         --early-stopping 5 --after-epochs $EPOCHS --cost-type=ce-mean-words \
-        --log model/ens$i/train.log --valid-log model/ens$i/valid.log \
+        --log $MODEL/ens$i/train.log --valid-log $MODEL/ens$i/valid.log \
         --enc-type bidirectional --enc-depth 1 --enc-cell-depth 4 \
         --dec-depth 1 --dec-cell-base-depth 8 --dec-cell-high-depth 1 \
         --tied-embeddings-all --layer-normalization \
@@ -148,13 +148,13 @@ done
 
 for i in $(seq 1 $N)
 do
-  mkdir -p model/ens-rtl$i
+  mkdir -p $MODEL/ens-rtl$i
   # train model
     $MARIAN_TRAIN \
-        --model model/ens-rtl$i/model.npz --type s2s \
+        --model $MODEL/ens-rtl$i/model.npz --type s2s \
         --train-sets data/all.bpe.en data/all.bpe.de \
         --max-length 100 \
-        --vocabs model/vocab.ende.yml model/vocab.ende.yml \
+        --vocabs $MODEL/vocab.ende.yml $MODEL/vocab.ende.yml \
         --mini-batch-fit -w $WORKSPACE --mini-batch 1000 --maxi-batch 1000 \
         --valid-freq 5000 --save-freq 5000 --disp-freq 500 \
         --valid-metrics ce-mean-words perplexity translation \
@@ -165,7 +165,7 @@ do
         --valid-mini-batch 64 \
         --overwrite --keep-best \
         --early-stopping 5 --after-epochs $EPOCHS --cost-type=ce-mean-words \
-        --log model/ens-rtl$i/train.log --valid-log model/ens-rtl$i/valid.log \
+        --log $MODEL/ens-rtl$i/train.log --valid-log $MODEL/ens-rtl$i/valid.log \
         --enc-type bidirectional --enc-depth 1 --enc-cell-depth 4 \
         --dec-depth 1 --dec-cell-base-depth 8 --dec-cell-high-depth 1 \
         --tied-embeddings-all --layer-normalization \
@@ -181,15 +181,15 @@ done
 for prefix in valid test2014 test2015 test2017
 do
     cat data/$prefix.bpe.en \
-        | $MARIAN_DECODER -c model/ens1/model.npz.best-translation.npz.decoder.yml \
-          -m model/ens?/model.npz.best-translation.npz -d $GPUS \
+        | $MARIAN_DECODER -c $MODEL/ens1/model.npz.best-translation.npz.decoder.yml \
+          -m $MODEL/ens?/model.npz.best-translation.npz -d $GPUS \
           --mini-batch 16 --maxi-batch 100 --maxi-batch-sort src -w 5000 --n-best --beam-size $B \
         > data/$prefix.bpe.en.output.nbest.0
 
     for i in $(seq 1 $N)
     do
-      $MARIAN_SCORER -m model/ens-rtl$i/model.npz.best-perplexity.npz \
-        -v model/vocab.ende.yml model/vocab.ende.yml -d $GPUS \
+      $MARIAN_SCORER -m $MODEL/ens-rtl$i/model.npz.best-perplexity.npz \
+        -v $MODEL/vocab.ende.yml $MODEL/vocab.ende.yml -d $GPUS \
         --mini-batch 16 --maxi-batch 100 --maxi-batch-sort trg --n-best --n-best-feature R2L$(expr $i - 1) \
         -t data/$prefix.bpe.en data/$prefix.bpe.en.output.nbest.$(expr $i - 1) > data/$prefix.bpe.en.output.nbest.$i
     done

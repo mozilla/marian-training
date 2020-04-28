@@ -18,6 +18,6 @@ cat data/$prefix.$TRG \
     | $mosesdecoder/scripts/tokenizer/normalize-punctuation.perl -l $TRG \
     | $mosesdecoder/scripts/tokenizer/tokenizer.perl -a -l $TRG > data/$prefix.tok.$TRG
 
-$mosesdecoder/scripts/recaser/truecase.perl -model model/tc.$TRG < data/$prefix.tok.$TRG > data/$prefix.tc.$TRG
+$mosesdecoder/scripts/recaser/truecase.perl -model $MODEL/tc.$TRG < data/$prefix.tok.$TRG > data/$prefix.tc.$TRG
 
-$subword_nmt/apply_bpe.py -c model/$SRC$TRG.bpe < data/$prefix.tc.$TRG > data/$prefix.bpe.$TRG
+$subword_nmt/apply_bpe.py -c $MODEL/$SRC$TRG.bpe < data/$prefix.tc.$TRG > data/$prefix.bpe.$TRG

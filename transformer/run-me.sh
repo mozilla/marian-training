@@ -38,7 +38,7 @@ then
     ./scripts/download-files.sh
 fi
 
-mkdir -p model
+export MODEL=`pwd`/../../../keep
 
 # preprocess data
 if [ ! -e "data/corpus.bpe.en" ]
@@ -54,19 +54,19 @@ then
 fi
 
 # create common vocabulary
-if [ ! -e "model/vocab.ende.yml" ]
+if [ ! -e "$MODEL/vocab.ende.yml" ]
 then
-    cat data/corpus.bpe.en data/corpus.bpe.de | $MARIAN_VOCAB --max-size 36000 > model/vocab.ende.yml
+    cat data/corpus.bpe.en data/corpus.bpe.de | $MARIAN_VOCAB --max-size 36000 > $MODEL/vocab.ende.yml
 fi
 
 # train model
-if [ ! -e "model/model.npz" ]
+if [ ! -e "$MODEL/model.npz" ]
 then
     $MARIAN_TRAIN \
-        --model model/model.npz --type transformer \
+        --model $MODEL/model.npz --type transformer \
         --train-sets data/corpus.bpe.en data/corpus.bpe.de \
         --max-length 100 \
-        --vocabs model/vocab.ende.yml model/vocab.ende.yml \
+        --vocabs $MODEL/vocab.ende.yml $MODEL/vocab.ende.yml \
         --mini-batch-fit -w 22000 --maxi-batch 1000 \
         --early-stopping 10 --cost-type=ce-mean-words \
         --valid-freq 5000 --save-freq 5000 --disp-freq 500 \
@@ -76,7 +76,7 @@ then
         --valid-translation-output data/valid.bpe.en.output --quiet-translation \
         --valid-mini-batch 64 \
         --beam-size 6 --normalize 0.6 \
-        --log model/train.log --valid-log model/valid.log \
+        --log $MODEL/train.log --valid-log $MODEL/valid.log \
         --enc-depth 6 --dec-depth 6 \
         --transformer-heads 8 \
         --transformer-postprocess-emb d \
@@ -90,13 +90,13 @@ then
 fi
 
 # find best model on dev set
-ITER=`cat model/valid.log | grep translation | sort -rg -k12,12 -t' ' | cut -f8 -d' ' | head -n1`
+ITER=`cat $MODEL/valid.log | grep translation | sort -rg -k12,12 -t' ' | cut -f8 -d' ' | head -n1`
 
 # translate test sets
 for prefix in test2014 test2015 test2016
 do
     cat data/$prefix.bpe.en \
-        | $MARIAN_DECODER -c model/model.npz.decoder.yml -m model/model.iter$ITER.npz -d $GPUS -b 12 -n -w 6000 \
+        | $MARIAN_DECODER -c $MODEL/model.npz.decoder.yml -m $MODEL/model.iter$ITER.npz -d $GPUS -b 12 -n -w 6000 \
         | sed 's/\@\@ //g' \
         | ../tools/moses-scripts/scripts/recaser/detruecase.perl \
         | ../tools/moses-scripts/scripts/tokenizer/detokenizer.perl -l de \

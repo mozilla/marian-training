@@ -35,24 +35,24 @@ mv data/corpus.tok.$TRG data/corpus.tok.uncleaned.$TRG
 $mosesdecoder/scripts/training/clean-corpus-n.perl data/corpus.tok.uncleaned $SRC $TRG data/corpus.tok 1 100
 
 # train truecaser
-$mosesdecoder/scripts/recaser/train-truecaser.perl -corpus data/corpus.tok.$SRC -model model/tc.$SRC
-$mosesdecoder/scripts/recaser/train-truecaser.perl -corpus data/corpus.tok.$TRG -model model/tc.$TRG
+$mosesdecoder/scripts/recaser/train-truecaser.perl -corpus data/corpus.tok.$SRC -model $MODEL/tc.$SRC
+$mosesdecoder/scripts/recaser/train-truecaser.perl -corpus data/corpus.tok.$TRG -model $MODEL/tc.$TRG
 
 # apply truecaser (cleaned training corpus)
 for prefix in corpus valid test2014 test2015 test2016
 do
-    $mosesdecoder/scripts/recaser/truecase.perl -model model/tc.$SRC < data/$prefix.tok.$SRC > data/$prefix.tc.$SRC
+    $mosesdecoder/scripts/recaser/truecase.perl -model $MODEL/tc.$SRC < data/$prefix.tok.$SRC > data/$prefix.tc.$SRC
     test -f data/$prefix.tok.$TRG || continue
-    $mosesdecoder/scripts/recaser/truecase.perl -model model/tc.$TRG < data/$prefix.tok.$TRG > data/$prefix.tc.$TRG
+    $mosesdecoder/scripts/recaser/truecase.perl -model $MODEL/tc.$TRG < data/$prefix.tok.$TRG > data/$prefix.tc.$TRG
 done
 
 # train BPE
-cat data/corpus.tc.$SRC data/corpus.tc.$TRG | $subword_nmt/learn_bpe.py -s $bpe_operations > model/$SRC$TRG.bpe
+cat data/corpus.tc.$SRC data/corpus.tc.$TRG | $subword_nmt/learn_bpe.py -s $bpe_operations > $MODEL/$SRC$TRG.bpe
 
 # apply BPE
 for prefix in corpus valid test2014 test2015 test2016
 do
-    $subword_nmt/apply_bpe.py -c model/$SRC$TRG.bpe < data/$prefix.tc.$SRC > data/$prefix.bpe.$SRC
+    $subword_nmt/apply_bpe.py -c $MODEL/$SRC$TRG.bpe < data/$prefix.tc.$SRC > data/$prefix.bpe.$SRC
     test -f data/$prefix.tc.$TRG || continue
-    $subword_nmt/apply_bpe.py -c model/$SRC$TRG.bpe < data/$prefix.tc.$TRG > data/$prefix.bpe.$TRG
+    $subword_nmt/apply_bpe.py -c $MODEL/$SRC$TRG.bpe < data/$prefix.tc.$TRG > data/$prefix.bpe.$TRG
 done

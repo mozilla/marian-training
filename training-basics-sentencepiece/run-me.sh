@@ -56,15 +56,15 @@ fi
 
 
 # create the model folder
-mkdir -p model
+export MODEL=`pwd`/../../../keep
 
 # train model
 $MARIAN/build/marian \
     --devices $GPUS \
     --type s2s \
-    --model model/model.npz \
+    --model $MODEL/model.npz \
     --train-sets data/corpus.ro data/corpus.en \
-    --vocabs model/vocab.roen.spm model/vocab.roen.spm \
+    --vocabs $MODEL/vocab.roen.spm $MODEL/vocab.roen.spm \
     --sentencepiece-options '--normalization_rule_tsv=data/norm_romanian.tsv' \
     --dim-vocabs 32000 32000 \
     --mini-batch-fit -w 20000 \
@@ -74,19 +74,19 @@ $MARIAN/build/marian \
     --valid-freq 10000 --save-freq 10000 --disp-freq 1000 \
     --cost-type ce-mean-words --valid-metrics ce-mean-words bleu-detok \
     --valid-sets data/newsdev2016.ro data/newsdev2016.en \
-    --log model/train.log --valid-log model/valid.log --tempdir model \
+    --log $MODEL/train.log --valid-log $MODEL/valid.log --tempdir $MODEL \
     --overwrite --keep-best \
     --seed 1111 --exponential-smoothing \
     --normalize=0.6 --beam-size=6 --quiet-translation
 
 # translate dev set
 cat data/newsdev2016.ro \
-    | $MARIAN/build/marian-decoder -c model/model.npz.best-bleu-detok.npz.decoder.yml -d $GPUS -b 6 -n0.6 \
+    | $MARIAN/build/marian-decoder -c $MODEL/model.npz.best-bleu-detok.npz.decoder.yml -d $GPUS -b 6 -n0.6 \
       --mini-batch 64 --maxi-batch 100 --maxi-batch-sort src > data/newsdev2016.ro.output
 
 # translate test set
 cat data/newstest2016.ro \
-    | $MARIAN/build/marian-decoder -c model/model.npz.best-bleu-detok.npz.decoder.yml -d $GPUS -b 6 -n0.6 \
+    | $MARIAN/build/marian-decoder -c $MODEL/model.npz.best-bleu-detok.npz.decoder.yml -d $GPUS -b 6 -n0.6 \
       --mini-batch 64 --maxi-batch 100 --maxi-batch-sort src > data/newstest2016.ro.output
 
 # calculate bleu scores on dev and test set
