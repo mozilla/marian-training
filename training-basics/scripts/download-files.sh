@@ -9,7 +9,7 @@ wget -nc http://data.statmt.org/rsennrich/wmt16_backtranslations/ro-en/corpus.bt
 wget -nc http://data.statmt.org/rsennrich/wmt16_backtranslations/ro-en/corpus.bt.ro-en.ro.gz
 
 # extract data
-tar -xf ro-en.tgz
+tar -xf ro-en.tgz --no-same-owner
 unzip SETIMES2.ro-en.txt.zip
 gzip -d corpus.bt.ro-en.en.gz corpus.bt.ro-en.ro.gz
 

@@ -9,9 +9,9 @@ wget -nc http://www.statmt.org/wmt13/training-parallel-commoncrawl.tgz
 wget -nc http://data.statmt.org/wmt17/translation-task/training-parallel-nc-v12.tgz
 
 # extract data
-tar -xf de-en.tgz
-tar -xf training-parallel-commoncrawl.tgz
-tar -xf training-parallel-nc-v12.tgz
+tar -xf de-en.tgz --no-same-owner
+tar -xf training-parallel-commoncrawl.tgz --no-same-owner
+tar -xf training-parallel-nc-v12.tgz --no-same-owner
 
 # create corpus files
 cat europarl-v7.de-en.de commoncrawl.de-en.de training/news-commentary-v12.de-en.de > corpus.de
