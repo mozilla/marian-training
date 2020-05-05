@@ -25,26 +25,26 @@ wget -nc http://www.statmt.org/europarl/v7/sl-en.tgz -O $DATA_DIR/sl-en.tgz
 wget -nc http://www.statmt.org/europarl/v7/sv-en.tgz -O $DATA_DIR/sv-en.tgz
 
 # Extract europarl data
-tar -xf $DATA_DIR/bg-en.tgz --no-same-owner
-tar -xf $DATA_DIR/cs-en.tgz --no-same-owner
-tar -xf $DATA_DIR/da-en.tgz --no-same-owner
-tar -xf $DATA_DIR/de-en.tgz --no-same-owner
-tar -xf $DATA_DIR/el-en.tgz --no-same-owner
-tar -xf $DATA_DIR/es-en.tgz --no-same-owner
-tar -xf $DATA_DIR/et-en.tgz --no-same-owner
-tar -xf $DATA_DIR/fi-en.tgz --no-same-owner
-tar -xf $DATA_DIR/fr-en.tgz --no-same-owner
-tar -xf $DATA_DIR/hu-en.tgz --no-same-owner
-tar -xf $DATA_DIR/it-en.tgz --no-same-owner
-tar -xf $DATA_DIR/lt-en.tgz --no-same-owner
-tar -xf $DATA_DIR/lv-en.tgz --no-same-owner
-tar -xf $DATA_DIR/nl-en.tgz --no-same-owner
-tar -xf $DATA_DIR/pl-en.tgz --no-same-owner
-tar -xf $DATA_DIR/pt-en.tgz --no-same-owner
-tar -xf $DATA_DIR/ro-en.tgz --no-same-owner
-tar -xf $DATA_DIR/sk-en.tgz --no-same-owner
-tar -xf $DATA_DIR/sl-en.tgz --no-same-owner
-tar -xf $DATA_DIR/sv-en.tgz --no-same-owner
+tar -xf $DATA_DIR/bg-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/cs-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/da-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/de-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/el-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/es-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/et-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/fi-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/fr-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/hu-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/it-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/lt-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/lv-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/nl-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/pl-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/pt-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/ro-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/sk-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/sl-en.tgz -C $DATA_DIR --no-same-owner
+tar -xf $DATA_DIR/sv-en.tgz -C $DATA_DIR --no-same-owner
 
 # Clean up
 rm $DATA_DIR/*.tgz
