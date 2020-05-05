@@ -1,7 +1,5 @@
 #!/bin/bash -v
 
-export DATA_DIR=$USER_DIR/europarl/v7
-
 mkdir -p $DATA_DIR
 
 # Download europarl data
