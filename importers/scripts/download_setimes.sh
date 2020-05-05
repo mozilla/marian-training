@@ -19,7 +19,7 @@ do
     for trg in bg  bs  el  en  hr  mk  ro  sq  sr  tr
     do
         if [ "$src" != "$trg" ]; then
-            unzip $DATA_DIR/SETIMES2.$src-$trg.txt.zip
+            unzip $DATA_DIR/SETIMES2.$src-$trg.txt.zip -d $DATA_DIR
         fi
     done
 done
